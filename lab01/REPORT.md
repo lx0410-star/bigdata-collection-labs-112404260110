@@ -2,11 +2,11 @@
 
 ## 学生信息
 
-- **姓名：鲁子蕊
-- **学号：112404260110
-- **班级：数据1241
-- **GitHub 用户名：lx0410-star
-- **仓库地址：https://github.com/lx0410-star/bigdata-collection-labs-112404260110
+- **姓名：** 鲁子蕊
+- **学号：** 112404260110
+- **班级：** 数据1241
+- **GitHub 用户名：** lx0410-star
+- **仓库地址：** https://github.com/lx0410-star/bigdata-collection-labs-112404260110
 
 > 文件位置：`lab01/REPORT.md`  
 > 完整代码保存在 `lab1_html_api.ipynb`。  
@@ -54,19 +54,15 @@ images/01_device_api.png
 
 > 不要截整个桌面；尽量裁剪到 Network 请求和右侧 Headers 区域。
 
-插入：
-
-```markdown
 ![Device API 发现证据](images/01_device_api.png)
-```
 
 ---
 
 ## 1.2 Company：判断静态加载
 
 - 页面：`/companies`
-- 数据加载方式：`静态加载 / 动态加载`
-- 判断依据：
+- 数据加载方式：`静态加载`
+- 判断依据：使用“右键 → 查看网页源代码”打开 `/companies` 的源码后，按 `Ctrl + F` 搜索页面中真实显示的企业名称 `临港精工001有限公司`，**能搜到**（企业名称出现在源码的企业记录节点中），说明企业数据随初始 HTML 一起返回，不需要浏览器执行 JS 二次加载，因此按**静态页面**处理即可。
 
 请说明：使用“右键 → 查看网页源代码”后，是否能搜索到页面中真实显示的企业名称。
 
@@ -86,11 +82,7 @@ images/02_company_source.png
 2. 使用 `Ctrl + F` 搜索一个页面中真实存在的企业名称；
 3. 源代码中能看到该企业名称或对应企业记录。
 
-插入：
-
-```markdown
 ![Company 静态加载证据](images/02_company_source.png)
-```
 
 ---
 
@@ -145,7 +137,7 @@ for page in range(1, total_pages + 1):
 - 设备总数：5000
 - 程序计算得到的总页数：100
 - 最终采集设备数：5000
-- 唯一 `device_id` 数：
+- 唯一 `device_id` 数：5000
 
 回答：
 
@@ -168,10 +160,11 @@ for page in range(1, total_pages + 1):
 - 是否参考过浏览器 Copy selector 或 AI？
 - 最终为什么采用现在这个写法？
 
-答：- 该 selector 使用了 **class 选择器**（`company-card`），并叠加标签名 `article` 双重限定。
--未使用浏览器 Elements 的 “Copy selector”。
--选择 `article.company-card` 而不是 `section.company-grid`，是因为前者对应“一条企业记录”，
-   后者对应“装载所有记录的容器”，只有前者能一次命中一页中的全部 20 条记录。
+答：
+
+- 该 selector 使用了 **class 选择器**（`company-card`），并叠加标签名 `article` 双重限定。
+- 未使用浏览器 Elements 的 “Copy selector”。
+- 选择 `article.company-card` 而不是 `section.company-grid`，是因为前者对应“一条企业记录”，后者对应“装载所有记录的容器”，只有前者能一次命中一页中的全部 20 条记录。
 
 ---
 
@@ -192,9 +185,9 @@ status = card.select_one("span.badge").get_text(strip=True)
 行业、区域、设备数量使用 `dt/dd` 结构后，请写出你最终如何得到：
 
 ```python
-industry = details["所属行业"]
-zone = details["所在区域"]
-device_count = __int(details["设备数量"].replace("台", "").strip())
+industry     = details["所属行业"]
+zone         = details["所在区域"]
+device_count = int(details["设备数量"].replace("台", "").strip())
 ```
 
 ---
@@ -203,13 +196,13 @@ device_count = __int(details["设备数量"].replace("台", "").strip())
 
 任选 **2 个字段**说明：
 
-1. 字段：
-   - 来自：` HTML 属性`
+1. 字段：company_id
+   - 来自：`HTML 属性`
    - 使用的方法：company_id 不在卡片可见文本里，而是以 data-company-id 属性挂在
      <article> 记录节点上，用 card.get("data-company-id") 直接读取属性值。
 
-2. 字段：
-   - 来自：文本
+2. 字段：device_count
+   - 来自：`文本`
    - 使用的方法：先用 card.select("dl > div") 逐行配对 dt（字段名）与 dd（值），
      get_text(strip=True) 提取文本得到 "6 台"；再 replace("台", "") 去单位、
      strip() 去空格、int() 转成整数 6。
@@ -220,8 +213,8 @@ device_count = __int(details["设备数量"].replace("台", "").strip())
 
 ## 4.1 下一页元素
 
-- “下一页” selector：
-- 第 1 页 `href` 示例：
+- “下一页” selector：`nav.pagination a:last-child`
+- 第 1 页 `href` 示例：`/companies?page=2`（相对路径，只有路径与查询参数，没有域名）
 
 ### 【截图 3】Company “下一页”元素
 
@@ -241,11 +234,7 @@ images/03_company_next.png
 
 > 不需要截 Python 代码；这一张图只证明你找到了正确的 DOM 元素。
 
-插入：
-
-```markdown
 ![Company 下一页元素](images/03_company_next.png)
-```
 
 ---
 
@@ -259,14 +248,14 @@ next_href = next_link.get("href")
 next_url = urljoin(
     current_url,
     next_href
-
+)
 ```
 
 再用 2～3 句话说明：
 
 > 你的程序如何完成“当前页 → 找下一页 href → 请求下一页 → 再解析”的循环？
 
-答：从第 1 页地址出发，每轮先请求当前页并解析出全部企业卡片（extend 逐条装入列表），再找“下一页”链接；若找不到就break 结束，避免对nne 取属性报错；否则urljoin把相对路径完整 URL作为下一轮的请求地址。循环 3 次即采集第 1~3 页。
+答：从第 1 页地址出发，每轮先请求当前页并解析出全部企业卡片（extend 逐条装入列表），再找“下一页”链接；若找不到（最后一页没有“下一页”）就 break 结束，避免对 None 取属性而报错；否则用 urljoin(当前页地址, href) 把相对路径拼成完整 URL，作为下一轮的请求地址。循环 3 次即采集第 1~3 页。
 
 ---
 
@@ -279,8 +268,8 @@ next_url = urljoin(
 | 3 |20
 | **合计** |60
 
-- 唯一 `company_id` 数：
-60
+- 唯一 `company_id` 数：60
+
 ---
 
 # 任务 5：结果验证
@@ -317,11 +306,7 @@ Company–Device 不一致企业数
 
 建议把这几个 `print()` 放在同一个 Notebook 单元格中运行后截图。
 
-插入：
-
-```markdown
 ![最终验证结果](images/04_validation.png)
-```
 
 ---
 
@@ -351,7 +336,8 @@ for company in companies:
 
 > 为什么 `status_code == 200` 仍然不能说明“数据已经采集正确”？
 
-答：200 只代表服务器成功响应了请求，不保证内容正确。数据可能漏页可能重复（同一页采了两遍导致 ID 重复）、可能字段错位或数量不符，这些问题状态码完全反映不出来。所以必须额外验证：总量是否符合、ID 是否唯一，并用 Device 数据反向统计各企业设备数，与 Company 页面的 device_count 交叉比对，全部一致才算采集正确。
+答：200 只代表服务器成功响应了请求，不保证内容正确。数据可能漏页（少请求了几页）、可能重复（同一页采了两遍导致 ID 重复）、可能字段错位或数量不符，这些问题状态码完全反映不出来。所以必须额外验证：总量是否符合、ID 是否唯一，并用 Device 数据反向统计各企业设备数，与 Company 页面的 device_count 交叉比对，全部一致才算采集正确。
+
 ---
 
 # 任务 6：保存采集结果
@@ -380,6 +366,5 @@ data/devices.json
 2. HTML “下一页”分页和 API `page` 分页有什么不同；
 3. 你使用了哪些方法验证采集结果。
 
-答：答：静态页面数据随 HTML 一起返回，用 requests 取文本、BeautifulSoup 加 CSS选择器解析即可；动态页面数据由 JS 二次请求加载，须先在 Network 找到接口，改为请求 JSON 并按 page 翻页，总页数由 total 和 page_size 算出而非写死。HTML 分页
-只能顺次解析当前页再取下一页链接；API 分页可按页码取任意一页。验证时除状态码外，还核对了总量、ID 唯一性，并用 Device 统计数与企业页 device_count 交叉比对。
+答：静态页面数据随 HTML 一起返回，用 requests 取文本、BeautifulSoup 加 CSS 选择器解析即可；动态页面数据由 JS 二次请求加载，须先在 Network 找到接口，改为请求 JSON 并按 page 翻页，总页数由 total 和 page_size 算出而非写死。HTML 分页只能顺次解析当前页再取下一页链接；API 分页可按页码取任意一页。验证时除状态码外，还核对了总量、ID 唯一性，并用 Device 统计数与企业页 device_count 交叉比对。
 
